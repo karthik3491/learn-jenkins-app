@@ -39,9 +39,7 @@ pipeline {
     }
     post {
         always {
-            steps {
             junit testResults: 'test-results.xml', allowEmptyResults: true
-        }
         }
     }
 }
