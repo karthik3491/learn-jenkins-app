@@ -39,7 +39,7 @@ pipeline {
     }
     post {
         always {
-            junit 'test-results/test-results.xml', allowEmptyResults: true
+            junit testResults: 'test-results/test-results.xml', allowEmptyResults: true
         }
     }
 }
