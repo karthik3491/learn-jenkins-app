@@ -8,7 +8,7 @@ pipeline {
 
     stages {
         //this is a comment
-        stage('build') {
+        stage('Build') {
             agent {
                 docker {
                     image 'node:18-alpine'
