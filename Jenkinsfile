@@ -70,14 +70,40 @@ pipeline {
                     }
 
                     post {
-                        always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                        always { LinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
                         }
                     }
                 }
             }         
         }
-        stage('Deploy') {
+
+        stage('Deploy Staging') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                npm install netlify-cli@20.1.1
+                echo "Deploying to Netlify with site ID: $NETLIFY_SITE_ID"
+                node_modules/.bin/netlify status
+                node_modules/.bin/netlify deploy --dir=build
+                '''
+            }
+        }
+
+        stage('Approval') {
+            steps {
+                timeout(time: 1, unit: 'MINUTES') {
+                    input message: 'Ready to deploy?', ok: 'Yes, I am sure I want to deploy!'
+                }
+            }
+        }
+
+
+        stage('Deploy Prod') {
             agent {
                 docker {
                     image 'node:18-alpine'
